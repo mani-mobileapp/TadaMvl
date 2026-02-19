@@ -15,32 +15,48 @@ import com.tada.mvl.ui.viewmodel.MapViewModel
 fun MVLApp() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Destinations.Map.route) {
+    val vm: MapViewModel = hiltViewModel()
+
+    NavHost(
+        navController = navController,
+        startDestination = Destinations.Map.route
+    ) {
+
         composable(Destinations.Map.route) {
-            val vm: MapViewModel = hiltViewModel()
             MapScreen(navController = navController, vm = vm)
         }
 
         composable(Destinations.Detail.route) { backStackEntry ->
             val which = backStackEntry.arguments?.getString("which") ?: "A"
-            val vm: MapViewModel = hiltViewModel()
-            DetailScreen(which = which, vm = vm, onBack = { navController.popBackStack() })
+            DetailScreen(
+                which = which,
+                vm = vm,
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Destinations.BookResult.route) {
-            val vm: MapViewModel = hiltViewModel()
-            BookResultScreen(vm = vm, onBack = { navController.navigate(Destinations.Map.route) }, onHistory = {
-                navController.navigate(Destinations.History.route)
-            })
+            BookResultScreen(
+                vm = vm,
+                onHistory = {
+                    navController.navigate(Destinations.History.route)
+                }
+            )
         }
 
         composable(Destinations.History.route) {
-            val vm: MapViewModel = hiltViewModel()
-            HistoryScreen(vm = vm, onBack = { navController.popBackStack() }, onSelect = { book ->
-                vm.setFromHistory(book)
-                navController.popBackStack(Destinations.Map.route, false)
-            })
+            HistoryScreen(
+                vm = vm,
+                onSelect = { book ->
+                    vm.setFromHistory(book)
+                    navController.popBackStack(
+                        Destinations.Map.route,
+                        false
+                    )
+                }
+            )
         }
     }
 }
+
 

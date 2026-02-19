@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +24,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import com.tada.mvl.ui.navigation.Destinations
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -46,7 +46,6 @@ fun MapScreen(
     val fusedLocationClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    // Permission launcher
     val permissionLauncher =
         rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -71,7 +70,6 @@ fun MapScreen(
         permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    // Observe camera movement (new maps compose way)
     LaunchedEffect(cameraState.isMoving) {
         if (!cameraState.isMoving) {
             val pos = cameraState.position.target
@@ -79,6 +77,12 @@ fun MapScreen(
             vm.updateAqi(pos.latitude, pos.longitude)
         }
     }
+    LaunchedEffect(Unit) {
+        vm.navigateToBook.collect {
+            navController.navigate(Destinations.BookResult.route)
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -86,7 +90,6 @@ fun MapScreen(
             .systemBarsPadding()
     ) {
 
-        // FULL SCREEN MAP
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraState
@@ -96,7 +99,6 @@ fun MapScreen(
             )
         }
 
-        // AQI Top Right Card
         ElevatedCard(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -112,7 +114,6 @@ fun MapScreen(
             )
         }
 
-        // Bottom Sheet Style Panel
         ElevatedCard(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -156,19 +157,15 @@ fun MapScreen(
                     onClick = {
                         val center = cameraState.position.target
                         vm.onVClicked(center.latitude, center.longitude)
-
-                        if (buttonText == "Book") {
-                            navController.navigate("book_result")
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                    }
+                )
+                {
                     Text(buttonText)
                 }
+
             }
         }
 
-        // Loading Overlay
         if (loading) {
             Box(
                 Modifier.fillMaxSize(),
@@ -178,7 +175,6 @@ fun MapScreen(
             }
         }
 
-        // Error
         error?.let {
             LaunchedEffect(it) {
                 Toast.makeText(context, it, Toast.LENGTH_LONG).show()
@@ -186,7 +182,6 @@ fun MapScreen(
             }
         }
 
-        // History FAB
         FloatingActionButton(
             onClick = { navController.navigate("history") },
             modifier = Modifier
@@ -197,6 +192,7 @@ fun MapScreen(
         }
     }
 }
+
 @Composable
 fun LocationRow(
     title: String,

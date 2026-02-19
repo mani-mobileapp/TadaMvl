@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import java.util.Calendar
 
 @HiltViewModel
@@ -29,6 +31,9 @@ class MapViewModel @Inject constructor(private val repo: MvlRepository) : ViewMo
 
     private val _bookResponse = MutableStateFlow<BookResponse?>(null)
     val bookResponse: StateFlow<BookResponse?> = _bookResponse.asStateFlow()
+    private val _navigateToBook = MutableSharedFlow<Unit>()
+    val navigateToBook = _navigateToBook.asSharedFlow()
+
 
     private val _history = MutableStateFlow<List<BookResponse>>(emptyList())
     val history: StateFlow<List<BookResponse>> = _history.asStateFlow()
@@ -130,7 +135,13 @@ class MapViewModel @Inject constructor(private val repo: MvlRepository) : ViewMo
             try {
                 _loading.value = true
                 val resp = repo.postBook(a, b)
+
                 _bookResponse.value = resp
+
+                _history.value += resp
+
+                _navigateToBook.emit(Unit)
+
             } catch (t: Throwable) {
                 _error.value = t.message
             } finally {
@@ -138,6 +149,7 @@ class MapViewModel @Inject constructor(private val repo: MvlRepository) : ViewMo
             }
         }
     }
+
 
     fun fetchHistoryForCurrentMonth() {
         viewModelScope.launch {
@@ -147,7 +159,10 @@ class MapViewModel @Inject constructor(private val repo: MvlRepository) : ViewMo
                 val y = cal.get(Calendar.YEAR)
                 val m = cal.get(Calendar.MONTH) + 1
                 val list = repo.getBooks(y, m)
-                _history.value = list
+
+                // ✅ Merge instead of replace
+                _history.value = (_history.value + list).distinctBy { it.id }
+
             } catch (t: Throwable) {
                 _error.value = t.message
             } finally {
@@ -155,6 +170,7 @@ class MapViewModel @Inject constructor(private val repo: MvlRepository) : ViewMo
             }
         }
     }
+
 
     fun setFromHistory(book: BookResponse) {
         viewModelScope.launch {

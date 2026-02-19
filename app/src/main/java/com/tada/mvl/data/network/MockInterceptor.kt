@@ -9,6 +9,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.nio.charset.StandardCharsets
+import java.util.UUID
 import kotlin.math.absoluteValue
 
 class MockInterceptor(val gson: Gson) : Interceptor {
@@ -62,10 +63,13 @@ class MockInterceptor(val gson: Gson) : Interceptor {
             (path.endsWith("/books") || path.endsWith("books")) && method == "POST" -> {
                 val parsed = gson.fromJson(bodyString, Map::class.java)
                 val price = 10000 + (parsed.hashCode() % 5000)
+
                 val response = HashMap(parsed)
                 response["price"] = price
+                response["id"] = UUID.randomUUID().toString()
                 gson.toJson(response)
             }
+
 
             (path.endsWith("/books") || path.endsWith("books")) && method == "GET" -> {
                 val list = listOf(

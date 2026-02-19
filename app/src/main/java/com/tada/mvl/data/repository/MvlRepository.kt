@@ -1,5 +1,6 @@
 package com.tada.mvl.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.tada.mvl.data.model.BookRequest
 import com.tada.mvl.data.model.BookResponse
@@ -15,12 +16,13 @@ import javax.inject.Singleton
 @Singleton
 class MvlRepository @Inject constructor(
     private val api: ApiService,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
 
     // In-memory cache keyed by rounded coordinates (3 decimals)
     private val cache = mutableMapOf<String, LocationInfo>()
 
+    @SuppressLint("DefaultLocale")
     private fun key(lat: Double, lon: Double): String {
         val a = String.format("%.3f", lat)
         val b = String.format("%.3f", lon)
@@ -94,5 +96,4 @@ class MvlRepository @Inject constructor(
         return@withContext resp.body() ?: emptyList()
     }
 
-    fun getCachedLocations(): List<LocationInfo> = cache.values.toList()
 }

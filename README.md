@@ -1,151 +1,141 @@
-📱 MVVM AQI Booking App
+# 📱 MVVM AQI Booking App
 
-A modern Android application built with MVVM architecture, Jetpack Compose, and a mocked backend to simulate production-ready behavior.
+A modern Android application built with **MVVM architecture**, **Jetpack Compose**, and a **mocked backend** to simulate production-ready behavior.
 
-🏗 Architecture
+---
 
-The app follows MVVM (Model–View–ViewModel) with unidirectional data flow.
+## 🏗 Architecture
 
-UI → ViewModel → Repository → API
+The app follows **MVVM (Model–View–ViewModel)** with **unidirectional data flow**.
+
+UI → ViewModel → Repository → API  
 Repository → ViewModel → UI
 
-Layers
+### 📦 Layers
 
-UI Layer
+#### 🖥 UI Layer
+- Jetpack Compose
+- Stateless composables observing ViewModel state
 
-Jetpack Compose
+#### 🧠 ViewModel Layer
+- Manages UI state
+- Business logic coordination
+- Kotlin Coroutines + StateFlow
 
-Stateless composables observing ViewModel state
+#### 📚 Repository Layer
+- Single source of truth
+- In-memory caching
+- API abstraction
 
-ViewModel Layer
+#### 🌐 Network Layer
+- Retrofit
+- OkHttp
+- MockInterceptor (simulated backend)
 
-Manages UI state
+---
 
-Business logic coordination
+## 🛠 Tech Stack
 
-Kotlin Coroutines + StateFlow
+- Jetpack Compose
+- Hilt (Dependency Injection)
+- Retrofit + OkHttp
+- Kotlin Coroutines + StateFlow
+- AAC ViewModel
+- Google Maps Compose
+- Repository Pattern
+- In-memory Cache
+- Unit Testing
 
-Repository Layer
+---
 
-Single source of truth
+## 📱 Screens
 
-In-memory caching
+### 1️⃣ Map Screen
+- Centered marker
+- AQI display
+- Set Location A / B
+- Book button
+- Internet connectivity check
+- Loading indicator
 
-API abstraction
+---
 
-Network Layer
+### 2️⃣ Detail Screen
+- Location name
+- AQI
+- Coordinates
+- Optional nickname (max 20 chars)
+- Card-based UI
 
-Retrofit
+---
 
-OkHttp
+### 3️⃣ Book Result Screen
+- Location A & B
+- Price
+- Mocked `POST /books`
 
-MockInterceptor (simulated backend)
+---
 
-🛠 Tech Stack
+### 4️⃣ History Screen
+- Mocked `GET /books?year=YYYY&month=MM`
+- Total booking count
+- Total price
+- Booking list
+- Click booking to repopulate Location A & B
 
-Jetpack Compose
+---
 
-Hilt (Dependency Injection)
+## 🔄 Mocking Strategy
 
-Retrofit + OkHttp
+All network calls are intercepted using **MockInterceptor**.
 
-Kotlin Coroutines + StateFlow
+### 🔁 To switch to a real backend:
+- Remove `MockInterceptor`
+- Update base URL
+- Replace DTO mappings if needed
 
-AAC ViewModel
+✅ No business logic changes required.
 
-Google Maps Compose
+---
 
-Repository Pattern
+## 🧠 Caching Strategy
 
-In-memory cache
+- AQI responses cached in-memory
+- Cache key = coordinates rounded to **3 decimal places**
+- Prevents redundant API calls
 
-Unit Testing
+### Example:
 
-📱 Screens
-1️⃣ Map Screen
 
-Centered marker
+---
 
-AQI display
+## 🌐 Network Handling
 
-Set Location A / B
+- Connectivity check before API calls
+- Loading indicators during operations
+- Graceful error handling
 
-Book button
+---
 
-Internet check
+## 🧪 Testing
 
-Loading indicator
+- Unit tests for Repository layer
+- Mocked Retrofit responses
+- Success & error cases covered
 
-2️⃣ Detail Screen
+---
 
-Location name
+## 🚀 Production-Ready Considerations
 
-AQI
+- Clean Architecture principles
+- Scalable modular structure
+- Easy backend switch
+- Proper state management
+- Testable components
 
-Coordinates
+---
 
-Optional nickname (max 20 chars)
+## 👨‍💻 Author
 
-Card-based UI
-
-3️⃣ Book Result Screen
-
-Location A & B
-
-Price
-
-Mocked POST /books
-
-4️⃣ History Screen
-
-Mocked GET /books?year=YYYY&month=MM
-
-Total booking count
-
-Total price
-
-Booking list
-
-Click booking to repopulate A & B
-
-🔄 Mocking Strategy
-
-All network calls are intercepted using MockInterceptor.
-
-To switch to real backend:
-
-Remove MockInterceptor
-
-Update base URL
-
-Replace DTO mappings if needed
-
-No business logic changes required.
-
-🧠 Caching Strategy
-
-AQI responses cached in-memory
-
-Cache key = coordinates rounded to 3 decimal places
-
-Prevents redundant API calls
-
-Example:
-
-(lat, lon) → rounded → cache key
-
-🌐 Network Handling
-
-Connectivity check before API calls
-
-Loading indicators during operations
-
-Graceful error handling
-
-🧪 Testing
-
-Unit tests for repository
-
-Mocked Retrofit responses
-
-Success & error cases covered
+Manikandan  
+Android Developer

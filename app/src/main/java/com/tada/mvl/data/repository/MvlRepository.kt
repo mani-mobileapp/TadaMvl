@@ -19,7 +19,6 @@ class MvlRepository @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
 
-    // In-memory cache keyed by rounded coordinates (3 decimals)
     private val cache = mutableMapOf<String, LocationInfo>()
 
     @SuppressLint("DefaultLocale")

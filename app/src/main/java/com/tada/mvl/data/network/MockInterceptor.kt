@@ -32,9 +32,8 @@ class MockInterceptor(val gson: Gson) : Interceptor {
 
         val responseJson = when {
             path.endsWith("reverse") -> {
-                val lat = queryParams["lat"]?.toDoubleOrNull() ?: 37.5
-
-                val admin = if (lat > 37.57) {
+                val latRand = (0..1).random()
+                val admin = if (latRand == 0) {
                     listOf(
                         AdministrativeEntry(2, "South Korea"),
                         AdministrativeEntry(3, "Seoul"),
@@ -49,7 +48,6 @@ class MockInterceptor(val gson: Gson) : Interceptor {
                         AdministrativeEntry(5, "Yangjae 2(i)-dong")
                     )
                 }
-
                 gson.toJson(ReverseResponse(LocalityInfo(administrative = admin)))
             }
 

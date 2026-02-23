@@ -5,6 +5,6 @@ sealed class Destinations(val route: String) {
     object Detail : Destinations("detail/{which}") {
         fun create(which: String) = "detail/$which"
     }
-    object BookResult : Destinations("book_result")
+    object BookResult : Destinations("bookResult")
     object History : Destinations("history")
 }

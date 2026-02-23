@@ -8,7 +8,7 @@
     <application
         android:name="com.tada.mvl.MVLApplication"
         android:icon="@drawable/mvlchain_logo"
-        android:label="TADA MVL">
+        android:label="TADA">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

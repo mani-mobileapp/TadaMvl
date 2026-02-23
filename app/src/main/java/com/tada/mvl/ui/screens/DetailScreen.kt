@@ -1,15 +1,13 @@
 package com.tada.mvl.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tada.mvl.data.model.LocationInfo
@@ -33,30 +31,27 @@ fun DetailScreen(
     }
 
     val originalNickname = loc?.nickname ?: ""
-
     val trimmedNickname = nickname.trim()
     val isValid = trimmedNickname.length <= 20
-    val isChanged = trimmedNickname != originalNickname.orEmpty()
+    val isChanged = trimmedNickname != originalNickname
     val isSaveEnabled = isValid && isChanged
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
+            .navigationBarsPadding()
     ) {
-
-        Text(
-            text = "Location $which Details",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
 
         loc?.let { location ->
 
-            ElevatedCard(
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                border = BorderStroke(1.dp, Color(0xFFE0E0E0))
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp)
@@ -81,12 +76,6 @@ fun DetailScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     DetailRow("AQI", location.aqi.toString())
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    DetailRow("Latitude", location.latitude.toString())
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    DetailRow("Longitude", location.longitude.toString())
 
                     if (!location.nickname.isNullOrBlank()) {
                         Spacer(modifier = Modifier.height(12.dp))
@@ -95,11 +84,15 @@ fun DetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-            ElevatedCard(
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                border = BorderStroke(1.dp, Color(0xFFE0E0E0))
             ) {
                 Column(
                     modifier = Modifier.padding(20.dp)
@@ -124,7 +117,7 @@ fun DetailScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(20.dp))
 
             Button(
                 onClick = {
@@ -132,11 +125,18 @@ fun DetailScreen(
                     onBack()
                 },
                 enabled = isSaveEnabled,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFC400),
+                    disabledContainerColor = Color.LightGray
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
             ) {
-                Text("Save Changes")
+                Text(
+                    text = "Save Changes",
+                    color = Color.Black
+                )
             }
         }
     }
@@ -172,20 +172,13 @@ fun DetailPreview() {
         nickname = "Office"
     )
 
-    DetailContent(
-        which = "A",
-        location = fakeLocation,
-        onSave = {}
-    )
+    DetailContentPreview(fakeLocation)
 }
 
 @Composable
-fun DetailContent(
-    which: String,
-    location: LocationInfo?,
-    onSave: (String) -> Unit
-) {
-    var nickname by remember { mutableStateOf(location?.nickname ?: "") }
+fun DetailContentPreview(location: LocationInfo) {
+
+    var nickname by remember { mutableStateOf(location.nickname ?: "") }
 
     Column(
         modifier = Modifier
@@ -193,37 +186,64 @@ fun DetailContent(
             .padding(20.dp)
     ) {
 
-        Text(
-            text = "Location $which Details",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            border = BorderStroke(1.dp, Color(0xFFE0E0E0))
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+
+                Text("A - ${location.name}")
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("AQI: ${location.aqi}")
+
+                if (!location.nickname.isNullOrBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Current Nickname: ${location.nickname}")
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            border = BorderStroke(1.dp, Color(0xFFE0E0E0))
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+
+                Text("Set Nickname (Optional)")
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = nickname,
+                    onValueChange = { nickname = it },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        location?.let { it ->
-
-            LocationCard("Details", it)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            OutlinedTextField(
-                value = nickname,
-                onValueChange = { if (it.length <= 20) nickname = it },
-                label = { Text("Max 20 characters") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = { onSave(nickname) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Save Changes")
-            }
-
+        Button(
+            onClick = {},
+            enabled = true,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFFFC400)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+        ) {
+            Text("Save Changes", color = Color.Black)
         }
     }
 }
-

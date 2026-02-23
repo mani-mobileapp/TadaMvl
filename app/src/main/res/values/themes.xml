@@ -2,4 +2,20 @@
 <resources>
 
     <style name="Theme.Mvltest" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.MVL.Splash" parent="Theme.SplashScreen">
+
+        <!-- Background color -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- App logo -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+
+        <!-- Optional icon background -->
+        <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
+
+        <!-- After splash, open main theme -->
+        <item name="postSplashScreenTheme">@style/Theme.Mvltest</item>
+
+    </style>
 </resources>

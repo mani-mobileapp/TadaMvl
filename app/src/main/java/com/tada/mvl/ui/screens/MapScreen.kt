@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.tada.mvl.ui.viewmodel.MapViewModel
 import com.google.android.gms.location.LocationServices
@@ -98,6 +100,30 @@ fun MapScreen(
                 state = MarkerState(position = cameraState.position.target)
             )
         }
+        MapContent(
+            aqi = aqi,
+            slotAName = slotA?.nickname ?: slotA?.name,
+            slotAAqi = slotA?.aqi,
+            slotBName = slotB?.nickname ?: slotB?.name,
+            slotBAqi = slotB?.aqi,
+            buttonText = buttonText,
+            loading = loading,
+            onAClick = {
+                if (slotA != null)
+                    navController.navigate("detail/A")
+            },
+            onBClick = {
+                if (slotB != null)
+                    navController.navigate("detail/B")
+            },
+            onButtonClick = {
+                val center = cameraState.position.target
+                vm.onVClicked(center.latitude, center.longitude)
+            },
+            onHistoryClick = {
+                navController.navigate("history")
+            }
+        )
 
         ElevatedCard(
             modifier = Modifier
@@ -127,7 +153,6 @@ fun MapScreen(
                 modifier = Modifier.padding(20.dp)
             ) {
 
-                // A LABEL
                 LocationRow(
                     title = "A",
                     location = slotA?.nickname ?: slotA?.name,
@@ -138,9 +163,8 @@ fun MapScreen(
                     }
                 )
 
-                Divider()
+                HorizontalDivider()
 
-                // B LABEL
                 LocationRow(
                     title = "B",
                     location = slotB?.nickname ?: slotB?.name,
@@ -226,4 +250,120 @@ fun LocationRow(
         )
     }
 }
+
+@Composable
+fun MapContent(
+    aqi: Int?,
+    slotAName: String?,
+    slotAAqi: Int?,
+    slotBName: String?,
+    slotBAqi: Int?,
+    buttonText: String,
+    loading: Boolean,
+    onAClick: () -> Unit,
+    onBClick: () -> Unit,
+    onButtonClick: () -> Unit,
+    onHistoryClick: () -> Unit,
+    showFakeMap: Boolean = false
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
+
+        if (showFakeMap) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFE0E0E0)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Google Map Preview", style = MaterialTheme.typography.titleMedium)
+            }
+        }
+
+        ElevatedCard(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "AQI: ${aqi ?: "--"}",
+                modifier = Modifier.padding(12.dp)
+            )
+        }
+
+        ElevatedCard(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Column(Modifier.padding(20.dp)) {
+
+                LocationRow(
+                    title = "A",
+                    location = slotAName,
+                    aqi = slotAAqi,
+                    onClick = onAClick
+                )
+
+                HorizontalDivider()
+                
+                LocationRow(
+                    title = "B",
+                    location = slotBName,
+                    aqi = slotBAqi,
+                    onClick = onBClick
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(onClick = onButtonClick) {
+                    Text(buttonText)
+                }
+            }
+        }
+
+        if (loading) {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        FloatingActionButton(
+            onClick = onHistoryClick,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp)
+        ) {
+            Icon(Icons.Default.History, contentDescription = null)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MapPreview() {
+
+    MapContent(
+        aqi = 120,
+        slotAName = "Home",
+        slotAAqi = 110,
+        slotBName = "Office",
+        slotBAqi = 95,
+        buttonText = "Book",
+        loading = false,
+        onAClick = {},
+        onBClick = {},
+        onButtonClick = {},
+        onHistoryClick = {},
+        showFakeMap = true
+    )
+}
+
 

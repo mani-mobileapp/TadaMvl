@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tada.mvl.data.model.LocationInfo
 import com.tada.mvl.ui.viewmodel.MapViewModel
 
 @Composable
@@ -153,4 +155,69 @@ fun DetailRow(label: String, value: String) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun DetailPreview() {
+
+    val fakeLocation = LocationInfo(
+        name = "Chennai",
+        aqi = 110,
+        latitude = 13.0827,
+        longitude = 80.2707,
+        nickname = "Office"
+    )
+
+    DetailContent(
+        which = "A",
+        location = fakeLocation,
+        onSave = {}
+    )
+}
+
+@Composable
+fun DetailContent(
+    which: String,
+    location: LocationInfo?,
+    onSave: (String) -> Unit
+) {
+    var nickname by remember { mutableStateOf(location?.nickname ?: "") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+    ) {
+
+        Text(
+            text = "Location $which Details",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        location?.let { it ->
+
+            LocationCard("Details", it)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = nickname,
+                onValueChange = { if (it.length <= 20) nickname = it },
+                label = { Text("Max 20 characters") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = { onSave(nickname) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Save Changes")
+            }
+        }
+    }
+}
 

@@ -7,14 +7,15 @@
 
     <application
         android:name="com.tada.mvl.MVLApplication"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/mvlchain_logo"
         android:label="TADA MVL">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity
             android:name="com.tada.mvl.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.MVL.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

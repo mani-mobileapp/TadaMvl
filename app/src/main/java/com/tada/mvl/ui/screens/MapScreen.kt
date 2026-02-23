@@ -89,7 +89,7 @@ fun MapScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
+
     ) {
 
         GoogleMap(
@@ -269,7 +269,7 @@ fun MapContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
+
     ) {
 
         if (showFakeMap) {
@@ -310,7 +310,7 @@ fun MapContent(
                 )
 
                 HorizontalDivider()
-                
+
                 LocationRow(
                     title = "B",
                     location = slotBName,

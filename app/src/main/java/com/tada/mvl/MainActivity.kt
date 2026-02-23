@@ -19,12 +19,11 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        WindowCompat.getInsetsController(window, window.decorView)
-            .isAppearanceLightStatusBars = true
+
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -33,5 +32,7 @@ class MainActivity : ComponentActivity() {
                 MVLApp()
             }
         }
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = true
     }
 }

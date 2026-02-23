@@ -32,10 +32,16 @@ fun DetailScreen(
         mutableStateOf(loc?.nickname ?: "")
     }
 
+    val originalNickname = loc?.nickname ?: ""
+
+    val trimmedNickname = nickname.trim()
+    val isValid = trimmedNickname.length <= 20
+    val isChanged = trimmedNickname != originalNickname.orEmpty()
+    val isSaveEnabled = isValid && isChanged
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
             .padding(20.dp)
     ) {
 
@@ -74,19 +80,17 @@ fun DetailScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    DetailRow(label = "AQI", value = location.aqi.toString())
-
+                    DetailRow("AQI", location.aqi.toString())
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    DetailRow(label = "Latitude", value = location.latitude.toString())
-
+                    DetailRow("Latitude", location.latitude.toString())
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    DetailRow(label = "Longitude", value = location.longitude.toString())
+                    DetailRow("Longitude", location.longitude.toString())
 
                     if (!location.nickname.isNullOrBlank()) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        DetailRow(label = "Current Nickname", value = location.nickname!!)
+                        DetailRow("Current Nickname", location.nickname!!)
                     }
                 }
             }
@@ -124,9 +128,10 @@ fun DetailScreen(
 
             Button(
                 onClick = {
-                    vm.setNickname(which, nickname)
+                    vm.setNickname(which, trimmedNickname)
                     onBack()
                 },
+                enabled = isSaveEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
@@ -217,6 +222,7 @@ fun DetailContent(
             ) {
                 Text("Save Changes")
             }
+
         }
     }
 }
